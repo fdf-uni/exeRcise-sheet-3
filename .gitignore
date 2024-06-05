@@ -1,0 +1,10 @@
+# Ignore PDF files (only applies to exercise sheet instructions)
+*.pdf
+
+# Redact author name
+author.txt
+
+.Rproj.user
+.Rhistory
+.RData
+.Ruserdata
