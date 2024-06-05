@@ -106,6 +106,16 @@ Link: <https://opendata.muenchen.de/dataset/vornamen-von-neugeborenen>
 
 a)  Download the data for both years and track it in git. For small
     datasets like these adding them to git is not a problem.
+    
+    We stored the datasets in a new directory called `data`.
+    Although they're small, we still used `git-lsf` as follows:
+    ```bash
+    git lfs install
+    git lfs track "*.csv"
+    git add .gitattributes
+    git add data
+    ```
+    Then we committed the changes.
 
 b)  Load the data for both years into R. Check the type of the count
     variable ("Anzahl") and look into the data to determine why it is
