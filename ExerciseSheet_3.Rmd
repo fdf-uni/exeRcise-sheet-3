@@ -45,6 +45,36 @@ c)  For all of the following tasks in this exercise sheet we ask you to
 
 d)  Name 2 strengths and 2 weaknesses of git. (Don't forget to create a
     commit after this answer, see *1c*)
+    
+    **Strengths:**
+    - Git is extremely fast. This is for example due to it being written in `C`,
+      a very fast, low level language or it running mostly locally so it isn't
+      being slowed down by having to (always) communicate with a centralized
+      server.
+    - Git is free and open-source (FOSS) software licensed under the GPLv2.
+      Apart from increasing transparency this also makes it (and its source code)
+      available to many people which also ensures that bugs are not only
+      recognized but also fixed very fast resulting in it being highly reliable
+      software.
+    
+    (Note that Git also comes with many other advantages that a version control
+    system generally provides like being able to track changes in an efficient
+    way. However, in the above we focused on strengths which Git has over other
+    SCM tools.)
+    
+    **Weaknesses:**
+    - Git has a rather steep learning curve. Especially for new users it can be
+      a challenge to get started with Git.
+      This is perhaps further amplified by there not being a native GUI (although
+      there are many good third-party ones) such that some users might have to
+      interact with the command line for the first time when learning how to use
+      Git.
+    - Since Git was mostly designed for use with text files (to be precise, 
+      source code of the Linux kernel), it can struggle with binary and media
+      files by using up a lot of storage.
+      However, with solutions like `git-lfs` or `git-annex` and storage costs
+      continuing to drop, this weakness becomes less and less severe.
+      
 e)  Knit this exercise sheet. Some new files will automatically be
     generated when knitting the sheet e.g. the HTML page. Ignore these
     files, as we only want to track the source files themselves.
