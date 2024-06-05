@@ -4,6 +4,9 @@
 # Redact author name
 author.txt
 
+# Ignore knitted files
+ExerciseSheet_3.html
+
 .Rproj.user
 .Rhistory
 .RData
