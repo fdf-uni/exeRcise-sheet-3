@@ -253,6 +253,27 @@ e)  Combine both datasets into one using `bind_rows()`.
 f)  Combine the counts for same names to determine the most popular
     names across both years. Print out the top 10 names in a nicely
     formatted table for both years. Include a table caption.
+    
+    ```{r}
+    names_combined %>% group_by(vorname) %>%
+      summarise(frequency = sum(anzahl), least = min(anzahl)) %>% 
+      arrange(desc(frequency)) %>% head(n=10) %>% 
+      knitr::kable(
+        col.names = c(
+          "Given name",
+          "Frequency (both years)",
+          "Least occurrences within a single year"
+        ),
+        caption = "Most popular given names in Munich across 2022 and 2023."
+      )
+    ```
+    
+    We quickly note that this table is completely independent of the random
+    numbers we generated in 3b) since none of the above names appear less than
+    $5$ times in either 2022 or 2023 as can be seen in the third column of the
+    table (which we also added only for this purpose - it is however interesting
+    to see that sorting by it instead would at least change the order of the
+    names).
 
 ## Exercise 4: Open Analysis (4 points)
 
