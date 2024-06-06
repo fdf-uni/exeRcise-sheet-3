@@ -237,6 +237,13 @@ c)  Calculate the total number of babies born in Munich in 2022
 
 d)  Add a new column `year` to both datasets which holds the correct
     year for each.
+    
+    We can simply proceed as follows by using `mutate()`:
+    ```{r}
+    names22 <- names22 %>% mutate(year = 2022)
+    names23 <- names23 %>% mutate(year = 2023)
+    ```
+    
 
 e)  Combine both datasets into one using `bind_rows()`.
 
