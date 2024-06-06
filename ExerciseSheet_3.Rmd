@@ -303,10 +303,42 @@ d)  Come up with a (research) question you want to answer with the data
     most by significant volcanic eruptions since 1900 by counting the number
     of such eruptions for all available countries.
     In my humble opinion, this question is interesting since it might help with
-    disaster preparedness and with identifying which countries might more
+    disaster preparedness and with identifying countries which might more
     probably require international help in extreme cases.
     
 e)  Use R to answer your chosen question.
+
+    ```{r}
+    # Load the dataset into R (and clean up the column names)
+    volcanoes <- janitor::clean_names(read_csv(
+      file.path("data", "volcanic-eruptions.csv"),
+      show_col_types = FALSE
+    # Clean up the names a bit more
+    )) %>% rename(
+      region = "entity",
+      number = "number_of_significant_volcanic_eruptions_ngdc_wds"
+    )
+    
+    # Create new dataset counting number of eruptions since 1900 for every
+    # country (we exclude the aggregated values for the entire world)
+    eruptions <- volcanoes %>% filter(year >= 1900, region != "World") %>%
+      group_by(region) %>%
+      summarise(sum = sum(number))
+    
+    eruptions %>% arrange(desc(sum)) %>% head(n = 10) %>% 
+      knitr::kable(
+        col.names = c(
+          "Country",
+          "Number of significant volcanic eruptions"
+        ),
+        caption = "Top ten countries with highest number of significant volcanic
+        erruptions since 1900"
+      )
+    ```
+
+    The above table shows the ten countries with the most volcanic eruptions,
+    answering our question from above.
+
 f)  Create a meaningful plot / figure with the dataset. Make sure to
     provide a figure caption (via the chunk options / Rmarkdown) and
     correctly label the figure.
