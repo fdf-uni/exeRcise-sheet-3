@@ -7,6 +7,17 @@ date: "`r Sys.Date()`"
 output: distill::distill_article
 ---
 
+```{css, echo = FALSE}
+d-article p {
+  text-align: justify;
+}
+
+d-article li {
+  text-align: justify;
+  word-wrap:break-word;
+}
+```
+
 ## General Remarks
 
 -   You can submit your solutions in teams of up to 3 students.
@@ -15,7 +26,7 @@ output: distill::distill_article
 -   Please use the exercise template document to work on and submit your
     results.
 -   Use a level 2 heading for each new exercise and answer each subtask
-    next to it's bullet point or use a new level 3 heading if you want.
+    next to its bullet point or use a new level 3 heading if you want.
 -   Always render the R code for your solutions and make sure to include
     the resulting data in your rendered document.
     -   Make sure to not print more than 10 rows of data (unless
@@ -84,14 +95,14 @@ e)  Knit this exercise sheet. Some new files will automatically be
 For this task you will upload your solution to GitHub.
 
 a)  Create a new repository on GitHub in your account named
-    `exeRcise-sheet-3`. Make sure you create a **public repository** so
+    `exeRcise-sheet-3`. Make sure you create a **public repository**, so
     we are able to see it for grading. Add the link to the repository
     below:
     
-    <center>https://github.com/fdf-uni/exeRcise-sheet-3</center>
+    <div style="text-align: center;"><https://github.com/fdf-uni/exeRcise-sheet-3></div>
     
 b)  Push your code to this new repository by copying and executing the
-    snippet on github listed under
+    snippet on GitHub listed under
     `…or push an existing repository from the command line`.
 c)  Regularly push your latest changes to GitHub again and especially do
     so when you are finished with this sheet.
@@ -290,7 +301,7 @@ c)  Put the name / title of the dataset and a link to it below.
     -   Dataset Name: Significant volcanic eruptions (NGDC-WDS)
     -   Link: <https://github.com/owid/owid-datasets/blob/a24e0de2c034fe13140aab88ef7579a150151ce2/datasets/Significant%20volcanic%20eruptions%20(NGDC-WDS)/Significant%20volcanic%20eruptions%20(NGDC-WDS).csv>
 
-    (The link is perhaps longer than it would have to be but like this we have
+    (The link is perhaps longer than it would have to be, but like this we have
     a permalink so that even after possible future changes one can still access
     the same dataset.)
 
@@ -409,4 +420,4 @@ f)  Create a meaningful plot / figure with the dataset. Make sure to
 ## Final Note
 
 Make sure to push all your commits and changes to GitHub before
-submittining the exercise sheet.
+submitting the exercise sheet.
