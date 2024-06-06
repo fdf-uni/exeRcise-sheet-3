@@ -298,6 +298,14 @@ d)  Come up with a (research) question you want to answer with the data
     and briefly explain why you believe this is an interesting question
     within one sentence. It should be a question that can be answered
     with the dataset and using R.
+    
+    In the following I want to analyze which countries have been affected the
+    most by significant volcanic eruptions since 1900 by counting the number
+    of such eruptions for all available countries.
+    In my humble opinion, this question is interesting since it might help with
+    disaster preparedness and with identifying which countries might more
+    probably require international help in extreme cases.
+    
 e)  Use R to answer your chosen question.
 f)  Create a meaningful plot / figure with the dataset. Make sure to
     provide a figure caption (via the chunk options / Rmarkdown) and
