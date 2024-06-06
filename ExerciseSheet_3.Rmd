@@ -342,6 +342,69 @@ e)  Use R to answer your chosen question.
 f)  Create a meaningful plot / figure with the dataset. Make sure to
     provide a figure caption (via the chunk options / Rmarkdown) and
     correctly label the figure.
+    
+    ```{r fig.align = "center", fig.cap = "World map with number of severe volcanic eruptions"}
+    # Get map data
+    world <- map_data("world")
+    
+    # Analysis as to why some countries like the USA are not plotted correctly
+    # anti_join(
+    #   volcanoes %>% select(region) %>% unique(),
+    #   world %>% select(region) %>% unique()
+    # )
+    
+    # Fix for this problem (this is why country codes are a thing ;) )
+    eruptions <- eruptions %>% mutate(
+      region = case_when(
+        region == "United States" ~ "USA",
+        region == "Democratic Republic of Congo" ~ "Democratic Republic of the Congo",
+        region == "Saint Kitts and Nevis" ~ "Saint Kitts",
+        region == "Saint Vincent and the Grenadines" ~ "Saint Vincent",
+        region == "Trinidad and Tobago" ~ "Trinidad",
+        TRUE ~ region
+      )
+    )
+    
+    # Create plot
+    left_join(world, eruptions, by = "region") %>% ggplot(
+      mapping = aes(
+        x = long,
+        y = lat,
+        map_id = region,
+        fill = sum
+      )
+    ) + geom_map(
+      map = world,
+      colour = "grey20",
+      linewidth = 0.1,
+    ) + coord_map(
+      "mercator",
+      xlim = c(-180,180)
+    ) + scale_fill_gradientn(
+      name = "Number of\neruptions",
+      colours = c("forestgreen", "#D0E562", "firebrick1"),
+      values = c(0, 0.15, 1),
+      na.value = "grey"
+    ) + theme_void(
+    ) + theme(
+      panel.background = element_rect(fill = "#96d0f5", color = "black"),
+    ) + labs(
+      title = "Severe volcanic eruptions around the world",
+      subtitle = "Counting the total number of eruptions from 1900 until 2017",
+      caption = "Source: OWID dataset \"Significant volcanic eruptions (NGDC-WDS)\""
+    )
+    ```
+    
+    One can clearly see our table from earlier represented in the above map.
+    We quickly note that countries for which no volcanic eruption data are
+    available have been filled in grey.
+    Another interesting point to raise is that one can see the increase of
+    eruptions around collision points of tectonic plates.
+    Especially some parts of the
+    [Pacific Ring of Fire](https://en.wikipedia.org/wiki/Ring_of_Fire)
+    stand out with countries like the Philippines, Japan, Indonesia, USA, Chile,
+    etc. having had many severe eruptions within the last century (as we already
+    found out earlier in exercise 4e)).
 
 ## Final Note
 
