@@ -122,6 +122,103 @@ b)  Load the data for both years into R. Check the type of the count
     not numeric? Fix the problem in an appropriate manner, it is OK if
     some of the counts are inaccurate because of this. Explain your
     solution and the repercussions.
+    
+    We first load the datasets into `R`.
+    ```{r}
+    # Load the tidyverse
+    library(tidyverse)
+    
+    # Load datasets (and clean up column names)
+    names22 <- janitor::clean_names(read_csv(
+      file.path("data", "given-names-munich-2022.csv"),
+      show_col_types = FALSE
+    ))
+    names23 <- janitor::clean_names(read_csv(
+      file.path("data", "given-names-munich-2023.csv"),
+      show_col_types = FALSE
+    ))
+    ```
+    
+    We now check the type of the specified column.
+    ```{r}
+    typeof(names22$anzahl)
+    typeof(names23$anzahl)
+    ```
+    
+    In both cases, the column has been imported as a character.
+    Inspection of its values shows why:
+    ```{r}
+    check_why_not_numeric <- function(data_set){
+      # Filter all observations which contain non-numeric characters
+      data_set %>% filter(str_detect(anzahl, "[^\\d]")) %>%
+        # Get the attained values
+        select(anzahl) %>% unique()
+    }
+    check_why_not_numeric(names22)
+    check_why_not_numeric(names23)
+    ```
+    One sees that names which ocurred less than 4 times were all grouped together
+    under the label "4 oder weniger" which (obviously) couldn't be interpreted
+    as a number.
+    
+    We fix this problem by generating random samples according to
+    [**Benford's law**](https://en.wikipedia.org/wiki/Benford's_law)
+    (or rather its generalization to number systems of other bases than $10$,
+    in this case $5$) for the observations in which the count variable has value
+    "4 oder weniger".
+    This of course also doesn't guarantee accuracy of the generated data since
+    the distribution of given names might still be completely different, however
+    it at least seems better than the following (and probably also most other)
+    alternatives:
+    - Use a normal distribution instead of the one from Benford's law.  
+      (**Disadvantage**: Isn't really common for distribution of _digits_ in
+      real-life sets of numerical data.)
+    - Set all values to the average of all $4$ possible values, i.e.
+      $\frac{5}{2}$ (since $\frac{1+2+3+4}{4}=\frac{10}{4}=\frac{5}{2}$).  
+      (**Disadvantage**: In the end pretty similar to the one before.)
+    - Set all values to maximal possible one, i.e. $4$.  
+      (**Disadvantage**: Although this might seem like a good idea when one is
+      interested in upper bounds and not worried about overcounting, this doesn't
+      seem like the best choice with regards to the upcoming exercises, since we
+      for example want to compare the number of births over the two years.)
+    - Set all values to the minimal possible one, i.e. $1$. (Note that it isn't
+      zero since we can expect that names which weren't given at all aren't
+      included in the dataset.)  
+      (**Disadvantage**: This might be of interest if one for example is
+      interested in the, say, $50$ most popular given names. However for getting
+      an estimate of births like in the next exercise, this is obviously
+      horrible.)
+    - Set all values to `NA`.  
+      (**Disadvantage**: More or less the same as the one before if not even
+      worse.)
+    
+    ```{r}
+    # Create samples of given length according to Benford's law in base b
+    # (we only need b=5 and n=1, but keep it like this for generality/fun).
+    # The formula for the probability is from the above linked Wikipedia article.
+    benf <- function(b, n){
+      sample(1:(b-1), n, replace=TRUE, prob=log(1+1/(1:(b-1)), b))
+    }
+    
+    new_anzahl <- function(data_set){
+      # Ensure creation of random number for every row by using `rowwise()`
+      data_set %>% rowwise() %>% 
+        mutate(
+          # Either replace by random value or turn into integer
+          anzahl = if_else(
+            anzahl == "4 oder weniger",
+            benf(5,1),
+            # We suppress warnings since they're only signaled due to values
+            # which we don't use anyways being turned into NA's.
+            suppressWarnings(as.integer(anzahl))
+          )
+        )
+    }
+    
+    # Update `anzahl` column in both datasets using above function
+    names22 <- new_anzahl(names22)
+    names23 <- new_anzahl(names23)
+    ```
 
 c)  Calculate the total number of babies born in Munich in 2022
     and 2023. Which year had the bigger baby-boom?
