@@ -287,8 +287,12 @@ a)  Go to <https://github.com/owid/owid-datasets/tree/master/datasets>
 b)  Download the dataset and track it in git.
 c)  Put the name / title of the dataset and a link to it below.
 
--   Dataset Name: ...
--   Link: <https://github.com/owid/owid-datasets/>...
+    -   Dataset Name: Significant volcanic eruptions (NGDC-WDS)
+    -   Link: <https://github.com/owid/owid-datasets/blob/a24e0de2c034fe13140aab88ef7579a150151ce2/datasets/Significant%20volcanic%20eruptions%20(NGDC-WDS)/Significant%20volcanic%20eruptions%20(NGDC-WDS).csv>
+
+    (The link is perhaps longer than it would have to be but like this we have
+    a permalink so that even after possible future changes one can still access
+    the same dataset.)
 
 d)  Come up with a (research) question you want to answer with the data
     and briefly explain why you believe this is an interesting question
