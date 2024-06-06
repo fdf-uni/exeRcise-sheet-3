@@ -360,7 +360,7 @@ f)  Create a meaningful plot / figure with the dataset. Make sure to
     
     # Analysis as to why some countries like the USA are not plotted correctly
     # anti_join(
-    #   volcanoes %>% select(region) %>% unique(),
+    #   eruptions %>% select(region) %>% unique(),
     #   world %>% select(region) %>% unique()
     # )
     
@@ -368,7 +368,8 @@ f)  Create a meaningful plot / figure with the dataset. Make sure to
     eruptions <- eruptions %>% mutate(
       region = case_when(
         region == "United States" ~ "USA",
-        region == "Democratic Republic of Congo" ~ "Democratic Republic of the Congo",
+        region == "Democratic Republic of Congo" ~ "Democratic Republic of the
+        Congo",
         region == "Saint Kitts and Nevis" ~ "Saint Kitts",
         region == "Saint Vincent and the Grenadines" ~ "Saint Vincent",
         region == "Trinidad and Tobago" ~ "Trinidad",
@@ -402,7 +403,10 @@ f)  Create a meaningful plot / figure with the dataset. Make sure to
     ) + labs(
       title = "Severe volcanic eruptions around the world",
       subtitle = "Counting the total number of eruptions from 1900 until 2017",
-      caption = "Source: OWID dataset \"Significant volcanic eruptions (NGDC-WDS)\""
+      caption = paste(
+        "Source: OWID dataset",
+        "\"Significant volcanic eruptions (NGDC-WDS)\""
+      )
     )
     ```
     
