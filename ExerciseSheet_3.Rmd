@@ -2,7 +2,7 @@
 title: "Exercise #3"
 subtitle: "Fortgeschrittene Statistische Software für NF"
 # Redact author name for privacy
-author: "`r xfun::file_string('author.txt')`"
+author: "`r ifelse(file.exists('author.txt'), xfun::file_string('author.txt'), 'fdf-uni')`"
 date: "`r Sys.Date()`"
 output: distill::distill_article
 ---
