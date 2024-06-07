@@ -16,6 +16,10 @@ d-article li {
   text-align: justify;
   word-wrap:break-word;
 }
+
+details summary > * {
+  display: inline;
+}
 ```
 
 ## General Remarks
@@ -119,7 +123,7 @@ a)  Download the data for both years and track it in git. For small
     datasets like these adding them to git is not a problem.
     
     We stored the datasets in a new directory called `data`.
-    Although they're small, we still used `git-lsf` as follows:
+    Although they're small, we still used `git-lfs` as follows:
     ```bash
     git lfs install
     git lfs track "*.csv"
@@ -245,6 +249,134 @@ c)  Calculate the total number of babies born in Munich in 2022
     Since compared to 2022, $`r sum(names22$anzahl) - sum(names23$anzahl)`$ less
     babies were born in 2023, we can say that (under our assumptions) 2022 had
     the bigger baby-boom.
+    
+    We quickly note that, of course, our evaluation of this exercise depends on
+    the randomly generated data such that the conclusion might change with
+    different executions of the code.
+    One could therefore raise the question how often this can be expected to
+    happen, however as turns out, this is in fact **extremely** unlikely:
+    
+    <details>
+    <summary>Detailed description^[I do realize that this part isn't really
+    necessary, however I was rather intrigued by the above question and therefore
+    decided to try and answer it. After having spend a significant amount of time
+    on it, I thought it wouldn't hurt to also include it in this file. Please
+    excuse me if that's not the case.]</summary>
+    We first get the guaranteed number of new born babies in each year, i.e. the
+    sum of counts of the names which ocurred at least $5$ times:
+    ```{r}
+    # Reload datasets since we want the original columns
+    names22_new <- janitor::clean_names(read_csv(
+      file.path("data", "given-names-munich-2022.csv"),
+      show_col_types = FALSE
+    ))
+    names23_new <- janitor::clean_names(read_csv(
+      file.path("data", "given-names-munich-2023.csv"),
+      show_col_types = FALSE
+    ))
+    
+    guaranteed_number <- function(data_set){
+      data_set %>% filter(anzahl != "4 oder weniger") %>%
+        mutate(anzahl = as.numeric(anzahl)) %>%
+        summarise(sum(anzahl)) %>% pull
+    }
+    
+    birth_dif <- guaranteed_number(names22_new) - guaranteed_number(names23_new)
+    ```
+    We see that there are already $`r birth_dif`$ births more in the year 2022
+    than in the year 2023 (once again note how this count is completely
+    non-random).
+    
+    We now get to the actually challenging part where we have to calculate a
+    remaining probability based on our random process.
+    Before we can proceed, we repeat the well-known theorem from probability
+    theory which states that the distribution of the sum of two independent
+    random variables equals the convolution of the distributions of the given
+    random variables.
+    In the following, we in particular need the special case about the density
+    function of the sum of random variables being the convolution of the single
+    density functions, here always with respect to the counting measure.
+    
+    Now we proceed as follows: Note that in 3b) we chose a random value
+    according to the following discrete probability density function for every
+    name which ocurred 4 or less times :
+    $$ p(d) := \begin{cases} \log_5\left(1+\frac{1}{d}\right) & \text{if } 1 \le
+    d \le 4\\ 0 & \text{else} \end{cases} $$
+    Since we did this in a row-wise manner and created the samples with
+    replacement, the resulting random variables are independent (we already
+    implicitely assumed this property at least to some extent in the earlier
+    exercise).
+    Furthermore, we can easily obtain the number of such random variables:
+    ```{r}
+    random_count <- function(data_set){
+      data_set %>% filter(anzahl == "4 oder weniger") %>% nrow()
+    }
+    random_count22 <- random_count(names22_new)
+    random_count23 <- random_count(names23_new)
+    ```
+    Thus, for the year 2022 we get the $`r random_count22`$ random variables
+    $(X_k)_{1 \le k \le `r random_count22`}$ and for the year 2023 we get the
+    $`r random_count23`$ random variables $(Y_l)_{1 \le l \le `r random_count22`}$
+    which are all independent of each other.
+    
+    Now let
+    $$ X := \sum_{k=1}^{`r random_count22`} X_k \qquad \text{and} \qquad
+       Y := \sum_{l=1}^{`r random_count23`} Y_l. $$
+    Note that by independence of the $X_k$ and $Y_l$, respectively, we have that
+    the density function $p_X$ of $X$ is the $`r random_count22`$-fold
+    convolution of $p$ with itself and the one of $Y$, $p_Y$, is given by the
+    $`r random_count23`$-fold convolution of $p$ with itself. (This follows using
+    induction from the theorem stated above.)
+    Hence, if for any density function $f$, we recursively define $f^{\ast 1}=f$
+    and $f^{\ast (n+1)} = f^{\ast n} \ast f$ for $n \ge 1$ , we have
+    $$ p_X = p^{\ast `r random_count22`} \qquad \text{and} \qquad
+       p_Y = p^{\ast `r random_count23`}. $$
+    Luckily, this can be implemented in `R` rather easily thanks to the
+    package `kSamples`.
+    ```{r}
+    # Calculate n-fold convolution of discrete random distribution with finite
+    # support.
+    conv_n <- function(supp, probs, n){
+      supp_new <- supp
+      probs_new <- probs
+      for (i in 1:(n-1)){
+        convol <- kSamples::conv(supp, probs, supp_new, probs_new)
+        supp_new <- convol[,1]
+        probs_new <- convol[,2]
+      }
+      return(convol)
+    }
+    
+    supp <- 1:4
+    probs <- log(1+1/(1:4), 5)
+    
+    p_X <- conv_n(supp, probs, random_count22)
+    p_Y <- conv_n(supp, probs, random_count23)
+    ```
+    Now we are almost done. Letting $Z := X - Y$, note that the total difference
+    of born babies between 2022 and 2023 is given by $Z + `r birth_dif`$ (we
+    simply split it up into a random and a non-random part), hence we are
+    interested in the probability
+    $$ \mathbb{P}[Z + `r birth_dif` < 0] = \mathbb{P}[Z < - `r birth_dif`] $$
+    since this is the probability that (strictly) less babies were born in 2022
+    than in 2023.
+    Once again using the above result about sums of independent random variables,
+    we have that the density function $p_Z$ of $Z$ is given as the convolution
+    of $p_X$ and the density function of $-Y$ (since $Z = X-Y = X + (-Y)$).
+    Luckily, in our `R` implementation, we can easily calculate the probability
+    distribution of $-Y$ based on the one of $Y$ by simply multiplying the
+    corresponding support vector with $-1$.
+    Hence, we can finish this analysis as follows:
+    ```{r}
+    probability <- as.data.frame(
+      kSamples::conv(p_X[,1], p_X[,2], -p_Y[,1], p_Y[,2])
+    ) %>% filter(V1 < - birth_dif) %>% summarise(sum(V2)) %>% pull
+    ```
+    </details>
+    
+    Overall, we see that under our assumptions, the probability of there having
+    been more births in 2023 than in 2022  amounts to only $`r probability*100`\%$
+    which is more than small enough for any reasonable measure.
 
 d)  Add a new column `year` to both datasets which holds the correct
     year for each.

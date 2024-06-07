@@ -72,6 +72,16 @@
       ],
       "Hash": "45f0398006e83a5b10b72a90663d8d8c"
     },
+    "SuppDists": {
+      "Package": "SuppDists",
+      "Version": "1.1-9.7",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Requirements": [
+        "R"
+      ],
+      "Hash": "82fc819203a2818bd5c10f758991b492"
+    },
     "askpass": {
       "Package": "askpass",
       "Version": "1.2.0",
@@ -832,6 +842,19 @@
         "methods"
       ],
       "Hash": "e1b9c55281c5adc4dd113652d9e26768"
+    },
+    "kSamples": {
+      "Package": "kSamples",
+      "Version": "1.2-10",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Requirements": [
+        "SuppDists",
+        "graphics",
+        "methods",
+        "stats"
+      ],
+      "Hash": "b0e8307b2e335a19b5b493326939b301"
     },
     "knitr": {
       "Package": "knitr",
